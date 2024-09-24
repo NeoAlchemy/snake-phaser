@@ -1,11 +1,14 @@
 import { EventBus } from '../EventBus';
+import { Snake } from '../objects/Snake';
 import { Scene } from 'phaser';
+
 
 export class Game extends Scene
 {
-    camera!: Phaser.Cameras.Scene2D.Camera;
-    background!: Phaser.GameObjects.Image;
-    gameText!: Phaser.GameObjects.Text;
+    snake!: Snake;
+    gameBorder!: Phaser.GameObjects.Graphics;
+    score!: Phaser.GameObjects.Text;
+
 
     constructor ()
     {
@@ -14,19 +17,35 @@ export class Game extends Scene
 
     create ()
     {
-        this.camera = this.cameras.main;
-        this.camera.setBackgroundColor(0x00ff00);
+        this.cameras.main.setBackgroundColor(0x96C400);
 
-        this.background = this.add.image(512, 384, 'background');
-        this.background.setAlpha(0.5);
+        this.score = this.add.text(20, 50, '0', { font: '48px Verdana', color: '#2F5300' });
 
-        this.gameText = this.add.text(512, 384, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
+        const gameBorder = this.add.graphics();
+        gameBorder.lineStyle(10, 0x2F5300, 1);
+        gameBorder.strokeRect(25, 120, 430, 360);
+        this.gameBorder = gameBorder;
+        this.physics.add.existing(this.gameBorder);
+        this.physics.world.setBounds(25, 120, 430, 368);
+
+        
+        let [x, y] = this._randomPointInGameBorder();
+        this.snake = new Snake(this, x, y)
 
         EventBus.emit('current-scene-ready', this);
+    }
+
+    update() {
+        this.snake.update("DOWN")
+    }
+
+    _randomPointInGameBorder(): [x: number, y: number] {
+        const CELL_SIZE = 20
+        const randX = Phaser.Math.Between(0, 15);
+        const randY = Phaser.Math.Between(0, 18);
+        const actualX = randX * CELL_SIZE + 25;
+        const actualY = randY * CELL_SIZE + 120;
+        return [actualX, actualY];
     }
 
     changeScene ()
