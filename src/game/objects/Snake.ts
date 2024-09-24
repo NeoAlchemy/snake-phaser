@@ -20,7 +20,6 @@ export class Snake extends Physics.Arcade.Group
         
         for (let i = 0; i < BODY_START_LENGTH; i++) {
             let bodyPart = new GameObjects.Sprite(scene, x + i * this.BODY_SIZE, y, 'bodyTexture');
-            bodyPart.setInteractive(true);
             snakeGroup.push(bodyPart);
             scene.add.existing(bodyPart);
         }
@@ -88,7 +87,6 @@ export class Snake extends Physics.Arcade.Group
 
     _getBodyPart(x: number, y: number) {
         let bodyPart = new GameObjects.Sprite(this.scene, x, y, 'bodyTexture');
-        bodyPart.setInteractive(true);
         this.scene.add.existing(bodyPart);
         return bodyPart
     }

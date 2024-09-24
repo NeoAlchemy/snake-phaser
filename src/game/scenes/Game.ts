@@ -21,6 +21,7 @@ export class Game extends Scene
     create ()
     {
         this.cameras.main.setBackgroundColor(0x96C400);
+
         const rexVirtualJoyStickPlugin: any = this.plugins.get('rexvirtualjoystickplugin');
         const joystick = rexVirtualJoyStickPlugin.add(this, {
             x: 250,
@@ -28,7 +29,8 @@ export class Game extends Scene
             radius: 50,
             base: this.add.circle(0, 0, 50, 0x888888),
             thumb: this.add.circle(0, 0, 30, 0xcccccc),
-            dir: '4dir'
+            dir: '4dir',
+            enable: true
         });
         this.joystick = joystick;
 
@@ -37,7 +39,6 @@ export class Game extends Scene
         
         let [x, y] = this._randomPointInGameBorder();
         this.apple = this.physics.add.sprite(260, 180, 'food')
-        this.apple.setInteractive(true)
 
         this._createGameBorder();
 
@@ -88,7 +89,6 @@ export class Game extends Scene
         gameBorder.lineStyle(10, 0x2F5300, 1);
         gameBorder.strokeRect(25, 120, 430, 360);
         this.gameBorder = gameBorder;
-        this.physics.add.existing(this.gameBorder);
         this.physics.world.setBounds(25, 120, 430, 368);
     }
 
