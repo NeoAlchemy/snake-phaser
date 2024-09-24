@@ -29,19 +29,20 @@ export class Game extends Scene
         this.physics.world.setBounds(25, 120, 430, 368);
 
         
-        let [x, y] = this._randomPointInGameBorder();
-        this.snake = new Snake(this, x, y)
+        //let [x, y] = this._randomPointInGameBorder();
+        this.snake = new Snake(this, 125, 180)
 
         EventBus.emit('current-scene-ready', this);
     }
 
     update() {
-        this.snake.update("DOWN")
+        this.snake.update("RIGHT")
+        //this.snake.grows("LEFT")
     }
 
     _randomPointInGameBorder(): [x: number, y: number] {
         const CELL_SIZE = 20
-        const randX = Phaser.Math.Between(0, 15);
+        const randX = Phaser.Math.Between(0, 20);
         const randY = Phaser.Math.Between(0, 18);
         const actualX = randX * CELL_SIZE + 25;
         const actualY = randY * CELL_SIZE + 120;

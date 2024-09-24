@@ -9,6 +9,7 @@ export class Snake extends Physics.Arcade.Group
         super(scene.physics.world, scene); 
         
         const BODY_START_LENGTH = 5;
+        let snakeGroup: Array<GameObjects.Sprite> = [];
 
         const graphics = scene.add.graphics();
         graphics.fillStyle(0x2F5300, 1); 
@@ -16,7 +17,7 @@ export class Snake extends Physics.Arcade.Group
         graphics.setVisible(false);
         graphics.generateTexture('bodyTexture', this.BODY_SIZE, this.BODY_SIZE);
         
-        let snakeGroup: Array<GameObjects.Sprite> = [];
+        
         for (let i = 0; i < BODY_START_LENGTH; i++) {
             let bodyPart = new GameObjects.Sprite(scene, x + i * this.BODY_SIZE, y, 'bodyTexture');
             bodyPart.setInteractive(true);
@@ -58,5 +59,37 @@ export class Snake extends Physics.Arcade.Group
         
             this.frameCount = 0;
         }
+    }
+
+    grows(direction: string) {
+        let x: number = 0;
+        let y: number = 0;
+        let tail = this.getLast(true) as GameObjects.Sprite;
+        switch (direction) {
+          case 'UP':
+            y = this.BODY_SIZE + tail.y;
+            x = tail.x;
+            break;
+          case 'DOWN':
+            y = this.BODY_SIZE - tail.y;
+            x = tail.x;
+            break;
+          case 'LEFT':
+            x = this.BODY_SIZE + tail.x;
+            y = tail.y;
+            break;
+          case 'RIGHT':
+            x = this.BODY_SIZE - tail.y;
+            y = tail.y;
+            break;
+        }
+        this.add(this._getBodyPart(x, y))
+    }
+
+    _getBodyPart(x: number, y: number) {
+        let bodyPart = new GameObjects.Sprite(this.scene, x, y, 'bodyTexture');
+        bodyPart.setInteractive(true);
+        this.scene.add.existing(bodyPart);
+        return bodyPart
     }
 }
