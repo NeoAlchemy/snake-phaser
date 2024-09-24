@@ -67,23 +67,23 @@ export class Snake extends Physics.Arcade.Group
         let tail = this.getLast(true) as GameObjects.Sprite;
         switch (direction) {
           case 'UP':
-            y = this.BODY_SIZE + tail.y;
-            x = tail.x;
-            break;
-          case 'DOWN':
             y = this.BODY_SIZE - tail.y;
             x = tail.x;
             break;
+          case 'DOWN':
+            y = this.BODY_SIZE + tail.y;
+            x = tail.x;
+            break;
           case 'LEFT':
-            x = this.BODY_SIZE + tail.x;
+            x = this.BODY_SIZE - tail.x;
             y = tail.y;
             break;
           case 'RIGHT':
-            x = this.BODY_SIZE - tail.y;
+            x = this.BODY_SIZE + tail.y;
             y = tail.y;
             break;
         }
-        this.add(this._getBodyPart(x, y))
+        this.add(this._getBodyPart(x, y), true)
     }
 
     _getBodyPart(x: number, y: number) {
