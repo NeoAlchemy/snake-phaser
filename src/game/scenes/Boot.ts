@@ -22,6 +22,13 @@ export class Boot extends Scene
 
     create ()
     {
+        const deviceOS = this.sys.game.device.os;
+        
+        if (deviceOS.android || deviceOS.iOS) {
+            this.scale.scaleMode = Phaser.Scale.FIT;
+        } else {
+            this.scale.scaleMode = Phaser.Scale.NONE;
+        }
         this.scene.start('Preloader');
     }
 }
