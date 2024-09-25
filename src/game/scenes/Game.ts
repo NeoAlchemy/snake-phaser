@@ -70,15 +70,14 @@ export class Game extends Scene
     }
 
     handleBorderCollision() {
-       console.log("borderCollision")
-       this.scene.restart()
        this.direction = "RIGHT"
+       this.scene.restart()
+
     }
 
     update() {
         this._setDirection();
         this.snake.update(this.direction)
-        this._onSnakeHitSnake();
     }
 
     _setDirection() {
@@ -141,20 +140,5 @@ export class Game extends Scene
             .setDisplaySize(width, height)
             .refreshBody();
     };
-
-    _onSnakeHitSnake() {
-        const snakeBodyParts = this.snake.getChildren() as GameObjects.Sprite[]
-        const head = snakeBodyParts[0];
-        
-        for (let i = 1; i < snakeBodyParts.length; i++) {
-            const bodyPart = snakeBodyParts[i];
-            if (head.x === bodyPart.x && head.y === bodyPart.y) {
-                console.log("snakehitsnake", bodyPart, i)
-                this.scene.restart()
-                this.direction = "RIGHT"
-                break;
-            }
-        }
-    }
 
 }

@@ -55,10 +55,12 @@ export class Snake extends Physics.Arcade.Group
                     head.x += AppConstants.BODY_SIZE;
                     break;
             }
-            
+
+            this._onSnakeHitSnake();
             this.add(head);
             this.frameCount = 0;
         }
+
     }
 
     grows() {
@@ -90,5 +92,20 @@ export class Snake extends Physics.Arcade.Group
         let bodyPart = new GameObjects.Sprite(this.scene, x, y, 'bodyTexture');
         this.scene.add.existing(bodyPart);
         return bodyPart
+    }
+
+    _onSnakeHitSnake() {
+        const snakeBodyParts = this.getChildren() as GameObjects.Sprite[]
+        const head = snakeBodyParts[0];
+        
+        for (let i = 1; i < snakeBodyParts.length; i++) {
+            const bodyPart = snakeBodyParts[i];
+            if (head.x === bodyPart.x && head.y === bodyPart.y) {
+                console.log("snakehitsnake", bodyPart, i)
+                this.direction = "RIGHT"
+                this.scene.scene.restart()
+                break;
+            }
+        }
     }
 }
