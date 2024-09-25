@@ -29,7 +29,7 @@ export class Snake extends Physics.Arcade.Group
     }
 
     update(direction: string) {
-        const MAX_FRAME_RATE = 10;
+        const MAX_FRAME_RATE = 15;
         this.direction = direction;
         this.frameCount++;
         if (this.frameCount > MAX_FRAME_RATE) {
