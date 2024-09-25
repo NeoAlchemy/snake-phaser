@@ -1,26 +1,25 @@
 import { GameObjects, Physics, Scene } from 'phaser';
+import { AppConstants } from '../util/AppConstants';
 
 export class Snake extends Physics.Arcade.Group
 {
     private frameCount: number = 0;
-    private BODY_SIZE: number = 20;
     private direction: string = 'RIGHT';
 
     constructor(scene: Scene, x: number, y: number) {
         super(scene.physics.world, scene); 
         
-        const BODY_START_LENGTH = 5;
         let snakeGroup: Array<GameObjects.Sprite> = [];
 
         const graphics = scene.add.graphics();
         graphics.setVisible(false);
-        graphics.fillStyle(0x2F5300, 1); 
-        graphics.fillRect(0, 0, this.BODY_SIZE, this.BODY_SIZE);
-        graphics.generateTexture('bodyTexture', this.BODY_SIZE, this.BODY_SIZE);
+        graphics.fillStyle(AppConstants.FOREGROUND_COLOR, 1); 
+        graphics.fillRect(0, 0, AppConstants.BODY_SIZE, AppConstants.BODY_SIZE);
+        graphics.generateTexture('bodyTexture', AppConstants.BODY_SIZE, AppConstants.BODY_SIZE);
         
         
-        for (let i = 0; i < BODY_START_LENGTH; i++) {
-            let bodyPart = new GameObjects.Sprite(scene, x + i * this.BODY_SIZE, y, 'bodyTexture');
+        for (let i = 0; i < AppConstants.BODY_START_LENGTH; i++) {
+            let bodyPart = new GameObjects.Sprite(scene, x + i * AppConstants.BODY_SIZE, y, 'bodyTexture');
             snakeGroup.push(bodyPart);
         }
         
@@ -29,21 +28,13 @@ export class Snake extends Physics.Arcade.Group
     }
 
     update(direction: string) {
-        const MAX_FRAME_RATE = 15;
         this.direction = direction;
         this.frameCount++;
-        if (this.frameCount > MAX_FRAME_RATE) {
+        if (this.frameCount > AppConstants.MAX_FRAME_RATE) {
             if (!this.getChildren().length) return;
     
-            // Get all body parts in reverse order (from tail to head)
             const bodyParts = this.getChildren() as GameObjects.Sprite[];
             
-            // Move each part to the position of the part in front of it
-            // for (let i = bodyParts.length - 1; i > 0; i--) {
-            //     bodyParts[i].x = bodyParts[i - 1].x;
-            //     bodyParts[i].y = bodyParts[i - 1].y;
-            // }
-    
             // Move the head in the given direction
             let head = bodyParts.shift(); // Head is the first element
             if (!head) return;
@@ -52,16 +43,16 @@ export class Snake extends Physics.Arcade.Group
 
             switch (direction) {
                 case 'UP':
-                    head.y -= this.BODY_SIZE;
+                    head.y -= AppConstants.BODY_SIZE;
                     break;
                 case 'DOWN':
-                    head.y += this.BODY_SIZE;
+                    head.y += AppConstants.BODY_SIZE;
                     break;
                 case 'LEFT':
-                    head.x -= this.BODY_SIZE;
+                    head.x -= AppConstants.BODY_SIZE;
                     break;
                 case 'RIGHT':
-                    head.x += this.BODY_SIZE;
+                    head.x += AppConstants.BODY_SIZE;
                     break;
             }
             
@@ -78,16 +69,16 @@ export class Snake extends Physics.Arcade.Group
         // Determine the new segment's position based on the current tail's position
         switch (this.direction) {
             case 'UP':
-              y -= this.BODY_SIZE;
+              y -= AppConstants.BODY_SIZE;
               break;
             case 'DOWN':
-              y += this.BODY_SIZE;
+              y += AppConstants.BODY_SIZE;
               break;
             case 'LEFT':
-              x -= this.BODY_SIZE;
+              x -= AppConstants.BODY_SIZE;
               break;
             case 'RIGHT':
-              x += this.BODY_SIZE;
+              x += AppConstants.BODY_SIZE;
               break;
           }
 

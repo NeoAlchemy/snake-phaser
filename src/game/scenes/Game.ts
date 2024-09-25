@@ -1,5 +1,6 @@
 import { EventBus } from '../EventBus';
 import { Snake } from '../objects/Snake';
+import { AppConstants } from '../util/AppConstants';
 import { GameObjects, Scene } from 'phaser';
 
 
@@ -22,25 +23,25 @@ export class Game extends Scene
 
     create ()
     {
-        this.cameras.main.setBackgroundColor(0x96C400);
+        this.cameras.main.setBackgroundColor(AppConstants.BACKGROUND_COLOR);
 
         const rexVirtualJoyStickPlugin: any = this.plugins.get('rexvirtualjoystickplugin');
         const joystick = rexVirtualJoyStickPlugin.add(this, {
-            x: 250,
-            y: 700,
-            radius: 50,
-            base: this.add.circle(0, 0, 50, 0x888888),
-            thumb: this.add.circle(0, 0, 30, 0xcccccc),
-            dir: '4dir',
+            x: AppConstants.JOYSTICK_X,
+            y: AppConstants.JOYSTICK_Y,
+            radius: AppConstants.JOYSTICK_RADIUS,
+            base: this.add.circle(0, 0, AppConstants.JOYSTICK_BASE_SIZE, AppConstants.JOYSTICK_BASE_COLOR),
+            thumb: this.add.circle(0, 0, AppConstants.JOYSTICK_THUMB_SIZE, AppConstants.JOYSTICK_THUMB_COLOR),
+            dir: AppConstants.JOYSTICK_DIR,
             enable: true
         });
         this.joystick = joystick;
 
         this.score = 0;
-        this.scoreText = this.add.text(20, 50, this.score.toString(), { font: '48px Verdana', color: '#2F5300' });
+        this.scoreText = this.add.text(20, 50, this.score.toString(), { font: '48px Verdana', color: AppConstants.FOREGROUND_COLOR_HEX });
         
         let [x, y] = this._randomPointInGameBorder();
-        this.apple = this.physics.add.sprite(260, 180, 'food')
+        this.apple = this.physics.add.sprite(AppConstants.APPLE_X * AppConstants.BODY_SIZE, AppConstants.APPLE_Y * AppConstants.BODY_SIZE, 'food')
 
         this._createGameBorder();
 
@@ -48,7 +49,7 @@ export class Game extends Scene
             this.cursorKey = this.input.keyboard.createCursorKeys();
         }
 
-        this.snake = new Snake(this, 125, 180);
+        this.snake = new Snake(this, AppConstants.SNAKE_X * AppConstants.BODY_SIZE, AppConstants.SNAKE_Y * AppConstants.BODY_SIZE);
 
         this.physics.add.collider(this.snake, this.apple, this.snakeEatApple, undefined, this);
         this.physics.add.collider(this.snake, this.gameBorder, this.handleBorderCollision, undefined, this);
@@ -64,7 +65,7 @@ export class Game extends Scene
 
         this.snake.grows();
         
-        this.score += 5
+        this.score += AppConstants.SCORE_INCREMENT
         this.scoreText.setText(this.score.toString())
     }
 
@@ -109,24 +110,37 @@ export class Game extends Scene
     }
 
     _randomPointInGameBorder(): [x: number, y: number] {
-        const CELL_SIZE = 20
-        const randX = Phaser.Math.Between(1, 19);
-        const randY = Phaser.Math.Between(1, 17);
-        const actualX = randX * CELL_SIZE + 25;
-        const actualY = randY * CELL_SIZE + 120;
+        const randX = Phaser.Math.Between(1, AppConstants.GRID_LENGTH - 1);
+        const randY = Phaser.Math.Between(1, AppConstants.GRID_HEIGHT - 1);
+        const actualX = randX * AppConstants.BODY_SIZE + AppConstants.GAME_BORDER_X;  //grid position * size adjusted for where border starts and how big the border is
+        const actualY = randY * AppConstants.BODY_SIZE + AppConstants.GAME_BORDER_Y;
         return [actualX, actualY];
     }
 
     _createGameBorder() {
-        const BORDER_THICKNESS = 10;
-        
-        this.gameBorder = this.physics.add.staticGroup();
-        this.gameBorder.create(240, 120, 'border', null, true).setDisplaySize(440, BORDER_THICKNESS).refreshBody(); // Top
-        this.gameBorder.create(240, 480, 'border', null, true).setDisplaySize(440, BORDER_THICKNESS).refreshBody(); // Bottom
-        this.gameBorder.create(25, 300, 'border', null, true).setDisplaySize(BORDER_THICKNESS, 350).refreshBody(); // Left
-        this.gameBorder.create(455, 300, 'border', null, true).setDisplaySize(BORDER_THICKNESS, 350).refreshBody(); // Right
 
+        const gridWidth = AppConstants.BODY_SIZE * AppConstants.GRID_LENGTH;
+        const gridHeight = AppConstants.BODY_SIZE * AppConstants.GRID_HEIGHT;
+        const halfGridWidth = gridWidth / 2;
+        const halfGridHeight = gridHeight / 2;
+        const halfBorderThickness = AppConstants.GAME_BOARD_THICKNESS / 2;
+
+        const gameBorderX = AppConstants.GAME_BORDER_X;
+        const gameBorderY = AppConstants.GAME_BORDER_Y;
+
+        this.gameBorder = this.physics.add.staticGroup();
+        
+        this._createBorder(halfGridWidth + gameBorderX, gameBorderY + halfBorderThickness, gridWidth, AppConstants.GAME_BOARD_THICKNESS);
+        this._createBorder(halfGridWidth + gameBorderX, gameBorderY + gridHeight - halfBorderThickness, gridWidth, AppConstants.GAME_BOARD_THICKNESS); // Bottom border
+        this._createBorder(gameBorderX - halfBorderThickness, halfGridHeight + gameBorderY, AppConstants.GAME_BOARD_THICKNESS, gridHeight); // Left border
+        this._createBorder(gameBorderX + gridWidth + halfBorderThickness, halfGridHeight + gameBorderY, AppConstants.GAME_BOARD_THICKNESS, gridHeight); // Right border
     }
+
+    _createBorder(x: number, y: number, width: number, height: number) {
+        this.gameBorder.create(x, y, 'border', null, true)
+            .setDisplaySize(width, height)
+            .refreshBody();
+    };
 
     _onSnakeHitSnake() {
         const snakeBodyParts = this.snake.getChildren() as GameObjects.Sprite[]
