@@ -34,6 +34,7 @@ export class Preloader extends Scene
       this.load.setPath('assets');
 
       this.load.image('food', 'food.png');
+      this.load.image('border', 'border.png');
       this.load.plugin(
         'rexvirtualjoystickplugin',
         'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js',

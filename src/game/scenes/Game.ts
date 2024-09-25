@@ -6,11 +6,13 @@ import { GameObjects, Scene } from 'phaser';
 export class Game extends Scene
 {
     snake!: Snake;
-    gameBorder!: Phaser.GameObjects.Graphics;
+    gameBorder!: any;//Phaser.GameObjects.Graphics;
     scoreText!: Phaser.GameObjects.Text;
     score!: number;
     apple!: Phaser.GameObjects.Sprite;
-    joystick: any;
+    joystick!: any;
+    direction: string = "RIGHT";
+    cursorKey!: any;
 
 
     constructor ()
@@ -42,36 +44,67 @@ export class Game extends Scene
 
         this._createGameBorder();
 
+        if (this.input.keyboard) {
+            this.cursorKey = this.input.keyboard.createCursorKeys();
+        }
+
         this.snake = new Snake(this, 125, 180);
 
         this.physics.add.collider(this.snake, this.apple, this.snakeEatApple, undefined, this);
-
+        this.physics.add.collider(this.snake, this.gameBorder, this.handleBorderCollision, undefined, this);
+        
         EventBus.emit('current-scene-ready', this);
 
 
     }
     
-    snakeEatApple() {
-        this.apple.destroy();
+    snakeEatApple(apple: any, snake: any) {
         let [x, y] = this._randomPointInGameBorder();
-        this.apple = this.physics.add.sprite(x, y, 'food');
-        this.snake.grows("RIGHT");
+        this.apple.setPosition(x, y)
+
+        this.snake.grows();
+        
         this.score += 5
         this.scoreText.setText(this.score.toString())
     }
 
+    handleBorderCollision() {
+       console.log("borderCollision")
+       this.scene.restart()
+       this.direction = "RIGHT"
+    }
+
     update() {
+        this._setDirection();
+        this.snake.update(this.direction)
+        this._onSnakeHitSnake();
+    }
+
+    _setDirection() {
         if (this.joystick.up) {
-            this.snake.update("UP")
+            this.direction = "UP";
         }
         else if (this.joystick.down) {
-            this.snake.update("DOWN")
+            this.direction = "DOWN";
         }
         else if (this.joystick.left) {
-            this.snake.update("LEFT")
+            this.direction = "LEFT";
         }
         else if (this.joystick.right) {
-            this.snake.update("RIGHT")
+            this.direction = "RIGHT";
+        }
+
+        if (this.cursorKey && this.cursorKey.up.isDown) {
+            this.direction = "UP";
+        }
+        else if (this.cursorKey && this.cursorKey.down.isDown) {
+            this.direction = "DOWN";
+        }
+        else if (this.cursorKey && this.cursorKey.left.isDown) {
+            this.direction = "LEFT";
+        }
+        else if (this.cursorKey && this.cursorKey.right.isDown) {
+            this.direction = "RIGHT";
         }
     }
 
@@ -85,15 +118,29 @@ export class Game extends Scene
     }
 
     _createGameBorder() {
-        const gameBorder = this.add.graphics();
-        gameBorder.lineStyle(10, 0x2F5300, 1);
-        gameBorder.strokeRect(25, 120, 430, 360);
-        this.gameBorder = gameBorder;
-        this.physics.world.setBounds(25, 120, 430, 368);
+        const BORDER_THICKNESS = 10;
+        
+        this.gameBorder = this.physics.add.staticGroup();
+        this.gameBorder.create(240, 120, 'border', null, true).setDisplaySize(440, BORDER_THICKNESS).refreshBody(); // Top
+        this.gameBorder.create(240, 480, 'border', null, true).setDisplaySize(440, BORDER_THICKNESS).refreshBody(); // Bottom
+        this.gameBorder.create(25, 300, 'border', null, true).setDisplaySize(BORDER_THICKNESS, 350).refreshBody(); // Left
+        this.gameBorder.create(455, 300, 'border', null, true).setDisplaySize(BORDER_THICKNESS, 350).refreshBody(); // Right
+
     }
 
-    changeScene ()
-    {
-        this.scene.start('GameOver');
+    _onSnakeHitSnake() {
+        const snakeBodyParts = this.snake.getChildren() as GameObjects.Sprite[]
+        const head = snakeBodyParts[0];
+        
+        for (let i = 1; i < snakeBodyParts.length; i++) {
+            const bodyPart = snakeBodyParts[i];
+            if (head.x === bodyPart.x && head.y === bodyPart.y) {
+                console.log("snakehitsnake", bodyPart, i)
+                this.scene.restart()
+                this.direction = "RIGHT"
+                break;
+            }
+        }
     }
+
 }
