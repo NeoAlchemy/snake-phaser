@@ -131,8 +131,8 @@ export class Game extends Scene
         
         this._createBorder(halfGridWidth + gameBorderX, gameBorderY + halfBorderThickness, gridWidth, AppConstants.GAME_BOARD_THICKNESS);
         this._createBorder(halfGridWidth + gameBorderX, gameBorderY + gridHeight - halfBorderThickness, gridWidth, AppConstants.GAME_BOARD_THICKNESS); // Bottom border
-        this._createBorder(gameBorderX - halfBorderThickness, halfGridHeight + gameBorderY, AppConstants.GAME_BOARD_THICKNESS, gridHeight); // Left border
-        this._createBorder(gameBorderX + gridWidth + halfBorderThickness, halfGridHeight + gameBorderY, AppConstants.GAME_BOARD_THICKNESS, gridHeight); // Right border
+        this._createBorder(gameBorderX + halfBorderThickness, halfGridHeight + gameBorderY, AppConstants.GAME_BOARD_THICKNESS, gridHeight); // Left border
+        this._createBorder(gameBorderX + gridWidth - halfBorderThickness, halfGridHeight + gameBorderY, AppConstants.GAME_BOARD_THICKNESS, gridHeight); // Right border
     }
 
     _createBorder(x: number, y: number, width: number, height: number) {
