@@ -20,7 +20,7 @@ export class Snake extends Physics.Arcade.Group
         }
         
         for (let i = 0; i < AppConstants.BODY_START_LENGTH; i++) {
-            let bodyPart = new GameObjects.Sprite(scene, x + i * AppConstants.BODY_SIZE, y, 'bodyTexture');
+            let bodyPart = this.scene.physics.add.sprite(x + i * AppConstants.BODY_SIZE, y, 'bodyTexture');
             snakeGroup.push(bodyPart);
         }
         
@@ -29,13 +29,14 @@ export class Snake extends Physics.Arcade.Group
     }
 
     update(direction: string) {
+        
         this.direction = direction;
         this.frameCount++;
         if (this.frameCount > AppConstants.MAX_FRAME_RATE) {
             if (!this.getChildren().length) return;
     
             const bodyParts = this.getChildren() as GameObjects.Sprite[];
-            
+
             // Move the head in the given direction
             let head = bodyParts.shift(); // Head is the first element
             if (!head) return;
@@ -57,11 +58,10 @@ export class Snake extends Physics.Arcade.Group
                     break;
             }
 
-            this._onSnakeHitSnake();
+            this._onSnakeHitSnake(head as Phaser.Types.Physics.Arcade.GameObjectWithBody, bodyParts);
             this.add(head);
             this.frameCount = 0;
         }
-
     }
 
     grows() {
@@ -95,18 +95,10 @@ export class Snake extends Physics.Arcade.Group
         return bodyPart
     }
 
-    _onSnakeHitSnake() {
-        const snakeBodyParts = this.getChildren() as GameObjects.Sprite[]
-        const head = snakeBodyParts[0];
-        
-        for (let i = 1; i < snakeBodyParts.length; i++) {
-            const bodyPart = snakeBodyParts[i];
-            if (head.x === bodyPart.x && head.y === bodyPart.y) {
-                console.log("snakehitsnake", bodyPart, i)
-                this.direction = "RIGHT"
-                this.scene.scene.restart()
-                break;
-            }
-        }
+    _onSnakeHitSnake(head: Phaser.Types.Physics.Arcade.GameObjectWithBody, bodyParts: GameObjects.Sprite[]) {
+        this.scene.physics.add.overlap(head, bodyParts, () => {
+            this.scene.scene.restart()
+            this.direction = "RIGHT"
+        });
     }
 }
