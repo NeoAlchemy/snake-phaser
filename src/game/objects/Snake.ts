@@ -11,12 +11,13 @@ export class Snake extends Physics.Arcade.Group
         
         let snakeGroup: Array<GameObjects.Sprite> = [];
 
-        const graphics = scene.add.graphics();
-        graphics.setVisible(false);
-        graphics.fillStyle(AppConstants.FOREGROUND_COLOR, 1); 
-        graphics.fillRect(0, 0, AppConstants.BODY_SIZE, AppConstants.BODY_SIZE);
-        graphics.generateTexture('bodyTexture', AppConstants.BODY_SIZE, AppConstants.BODY_SIZE);
-        
+        if (!scene.textures.exists('bodyTexture')) {
+            const graphics = scene.add.graphics();
+            graphics.setVisible(false);
+            graphics.fillStyle(AppConstants.FOREGROUND_COLOR, 1); 
+            graphics.fillRect(0, 0, AppConstants.BODY_SIZE, AppConstants.BODY_SIZE);
+            graphics.generateTexture('bodyTexture', AppConstants.BODY_SIZE, AppConstants.BODY_SIZE);
+        }
         
         for (let i = 0; i < AppConstants.BODY_START_LENGTH; i++) {
             let bodyPart = new GameObjects.Sprite(scene, x + i * AppConstants.BODY_SIZE, y, 'bodyTexture');
