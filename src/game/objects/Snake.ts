@@ -98,7 +98,6 @@ export class Snake extends Physics.Arcade.Group
     _onSnakeHitSnake(head: Phaser.Types.Physics.Arcade.GameObjectWithBody, bodyParts: GameObjects.Sprite[]) {
         this.scene.physics.add.overlap(head, bodyParts, () => {
             this.scene.scene.restart()
-            this.direction = "RIGHT"
         });
     }
 }

@@ -53,7 +53,9 @@ export class Game extends Scene
 
         this.physics.add.collider(this.snake, this.apple, this.snakeEatApple, undefined, this);
         this.physics.add.collider(this.snake, this.gameBorder, this.handleBorderCollision, undefined, this);
-        
+
+        this.direction = "RIGHT";
+
         EventBus.emit('current-scene-ready', this);
 
 
@@ -70,7 +72,6 @@ export class Game extends Scene
     }
 
     handleBorderCollision() {
-       this.direction = "RIGHT"
        this.scene.restart()
 
     }
