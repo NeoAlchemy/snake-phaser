@@ -38,7 +38,7 @@ export class Game extends Scene
         this.joystick = joystick;
 
         this.score = 0;
-        this.scoreText = this.add.text(20, 50, this.score.toString(), { font: '48px Verdana', color: AppConstants.FOREGROUND_COLOR_HEX });
+        this.scoreText = this.add.text(20, 10, this.score.toString(), { font: '48px Verdana', color: AppConstants.FOREGROUND_COLOR_HEX });
         
         let [x, y] = this._randomPointInGameBorder();
         this.apple = this.physics.add.sprite(AppConstants.APPLE_X * AppConstants.BODY_SIZE, AppConstants.APPLE_Y * AppConstants.BODY_SIZE, 'food')
